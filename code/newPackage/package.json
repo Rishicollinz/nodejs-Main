@@ -1,0 +1,16 @@
+{
+  "name": "newpackage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ex11.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dogsay": "^2.2.4",
+    "rishipackagetry": "^2.0.0"
+  }
+}

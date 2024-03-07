@@ -1,0 +1,536 @@
+<4/3/24=17:04>
+playlist : https://www.youtube.com/playlist?list=PLC3y8-rFHvwh8shCMHFA5kWxD9PaPwxaY
+
+
+Introduction:
+============
+->Node.js is an open-source, cross-platform, JavaScript runtime environment.
+
+why?
+====
+->Build end-to-end(from frontend->backend) JS applications.
+
+->Community support.
+
+Course Structure:
+=================
+
+1.Terms and concepts to understand what is node.js.
+2.Modules(user defined)
+3.Built-in Modules
+4.Node.js internals
+5.NPM
+6.CLI tool.
+7.Miscellaneous
+
+ECMA Script:
+============
+
+History:
+=======
+->Netscape created JS.
+
+->ECMA-262 is the language specification.
+
+->ECMAScript is the language that implements ECMA-262.
+
+->JS is basically ECMAScript at its core but builds on top of that.
+
+Chrome V8 Engine:
+================
+
+->JS can't be directly understood by the computer. so we use js engine to convert js to machine code.
+
+->Js engine is created by browser vendors.
+
+Eg:
+    ->V8 -Opensource Google chrome , latest edge
+    ->SpiderMonkey - Firefox
+    ->JavaScript Core - developed by apple for safari.
+    ->Chakra - JS engine for original edge.
+
+=>v8 is opensource.
+->It implements ecma script.
+->created using c++ and can be embedded in any c++ applications.
+
+=>By embedding v8 into your own c++ application, you can write c++ code that gets executed when a user writes javascript code.
+
+=>You can add new features to JavaScript itself.
+
+For ex:
+    ->features that are available in c++ like file handling,network but not available in js. can be implemented by using own c++ code on top of v8 engine.(i.e ., node.js on top of v8 engine)
+
+JavaScript Runtime:
+===================
+->An environment which provides all the necessary components in order to use and run a js program.
+->Js engine is just a component in js runtime.
+components:
+1.JS engine:
+|-->Memory(heap to store variable data);
+|-->Call stack(where js code executed)
+2.Web/browser APIs.
+|-->DOM,Storage,Timers(setTimeout,setInterval)
+3.Queue are places where async function wait for to be executed.
+4.Event loop->Ensures that async tasks are executed in correct order.
+
+Queue:
+->Microtask queue.
+->Callback queue.
+
+*.All async operations are pushed into either of these queues.
+->Microtask queue will have promises,mutual observers and it has higher priority than callback queue.
+
+->Callback queue will have other async functions like setTimeout, setInterval.
+
+->Event loop is the one which checks these queue based on their priority and pushes them to call stack for execution.
+
+Ref: Dia1.jpg
+
+What is Node.js?:
+================ 
+
+->Node.js is an open-source, cross-platform JavaScript runtime environment.
+
+Opensource- Publicly available.
+
+Cross Platform - available on Mac, Windows and Linux.
+
+JavaScript runtime environment - provides all the necessary components in order to use and run a javascript program outside the browser.
+
+what can you build with node.js:
+================================
+
+->Due to node js, the js can be run outside the browser which in turn opened up the possibilities,
+
+=>Traditional Websites,
+=>Backend Services like APIs.
+=>Real-time applications.
+=>Streaming services.
+=>CLI tools.
+=>Multiplayer games.
+
+nodejs repo: github.com/nodejs/node
+
+Node JS runtime :
+refer: dia2.jpg
+
+=>It can execute not only the standard ecmascript language but also new features that are made available throught c++ bindings using the v8 engine.
+
+=>It consists of c++ files which form the core features and js files which expose common utilities and someof the c++ features for easier consumption.
+
+Executing JavaScript with Node:
+===============================
+
+1.Node REPL=  Interactive session by typing node and enter on terminal.
+->Read
+->Evaluate
+->Print
+->loop
+2.Create a .js file and run it in terminal:
+node filename.js
+
+Browser vs Node.js:
+==================
+
+->In the browser, most of the time what you are doing is interacting with the DOM, or other web platform APIs like cookies. You don't have the document, window and all the other objects that are provided by the browser.
+
+->In browser, we don't have all the nice APIs that node.js provides through its modules. For example, the filesystem access functionality.
+
+->With node.js, you control the environment.
+E.g : we can know es6 support based on node version.
+
+->With a browser, you are at the mercy of the what the users choose..E.g:internet explorer usage by user.
+
+<5/3/24:10:50>
+
+Modules:
+=======
+->A module is an encapsulated and reusable chunk of code that has its own context.
+->In Node.js, each file is treated as a separate module.
+
+Types of Modules:
+=================
+
+1.Local Modules - Modules that we create in our application.
+
+2.Built-in modules - Modules that Node.js ships with out of the box.
+
+3.Third party modules - Modules written by other developers that we can use in our application.
+
+Local Modules:
+==============
+->Modules that we create and use in our application.
+
+Common Js:
+==========
+
+->Common Js is a standard that states how a module should be structured and shared.
+
+->These are the original way to package Javascript code for node.js;
+
+->In node.js, each file is different module.
+
+Steps:
+=====
+
+->In the source(original func), export the functions using the exports.func_name;
+Refer:ex2.js
+
+->In the inherit place, use .require('./filename.js') and inherit them as a variable.e.g:circle
+
+->Use this variable, to access all the functions in the source like circle.area(),circle.circumference();
+
+refer:ex1.js
+
+Implementation of class in a module/ class as a Common file module:
+==================================
+
+->Use module.exports for the source.
+->create a new object for the class in destination.
+->use that for the calc in class.
+refer:square.js and ex3.js
+-----------------------------
+
+module.exports={function 1, function2};->we can use it like this too;
+
+--------------------------------
+
+Module Scope:
+=============
+
+=>Each file is a separate module. Each file can have the same variable and it won't result in conflict.
+
+=>Node.js will wrap each file with a IIFE. so the variable will have module scope.
+
+Module Wrapper:
+==============
+
+=>IIFE is the one which wraps every module and it contains 5 parameters;
+They are,
+    ->__filename
+    ->__dirname
+    ->require
+    ->exports
+    ->module
+
+
+->dirname: current path/folder of the current module.
+->filename: path to current file.
+->require: import a module by path.
+->Module: reference to current module.
+
+we can use this in every module.
+
+Module Caching:
+===============
+
+=>Module caching is the process of storing/remembering the previously imported module.
+=>Suppose if a file imports a module twice, 
+require(module);
+some changes
+require(module);
+print();
+
+=>The changes from the first import is shown after even the second import because a file caches the module which it imports.
+
+refer:ex6,ex7.js
+
+Ways to export and require:
+==========================
+1.module.exports=add;
+2.module.exports = {add:addition,subs:subtraction };
+here add is the one, we have used in require in another file.
+addition is the function used in the same file.
+3.module.exports.add
+4.exports.add=(next topic)
+5.destructing in the destination;
+
+Module.exports vs exports:
+=========================
+
+=>Module.exports is a reference to exports.
+=> A module only exports module.exports;
+
+=>when we use exports.add, it is referenced or implemented as module.exports.add, so the module exports this.
+
+=>Generally we export multiple items as an object,
+module.exports={add,sub};//this works;
+but if we use,
+exports={add,sub}//this won't work;
+
+=>Because, exports is created as a new object literal with add,sub value; but the module file only exports module.exports.
+=>when importing using require, it imports a empty item.
+
+sol: we can work around like this,
+ 
+ES Modules:
+==========
+
+why es modules?
+->when node.js introduced , there was no built in module system. so node.js defaulted to commonJs module system.
+->In es6, js have introduced es module system.
+
+->export and import keyword,default export.
+->the extension of the module file for ejs should be '.mjs'.
+
+Importing JSON as module:
+=========================
+ 
+1.Importing a json file is same as normal common js module but the require will convert the .json to normal js object.
+
+watch mode:
+==========
+syntax: node --watch filename
+
+->If there is anychange to file, the file will be executed again.
+refer:ex10.js
+
+commonJs vs esm:
+->esm can't have imported in a conditional block but common js can do that.
+->esm is async where is common js is sync.
+
+->cjs is runtime and can use .require anywhere in the code.
+
+->esm modules should be imported in the top and they are also hoisted to the top.
+
+Global object:
+=============
+
+In JavaScript, the global object is an object that exists in the global scope and acts as the container for all global variables, functions, and properties. In web browsers, the global object is usually the window object, while in Node.js environments, it's often referred to as global.
+
+The global object provides access to various built-in functions and properties, such as:
+
+Global functions like setTimeout(), setInterval(), and console.log().
+Global properties like NaN, Infinity, and undefined.
+Constructors like Array, String, and Object.
+
+7/3/24
+
+NPM:
+===
+
+->Largest software library
+->Software package manager.
+
+->Npm is a library or a registry which contains code packages written by various developers.
+->A command line interface tool that lets up manage packages in a project.
+
+Other package Managers:
+yarn,pnpm.
+
+->Default of nodejs is npm.
+
+to check npm version : npm -v
+
+->Npm is a not only node but also a package manager for js.
+
+why npm:
+=======
+
+->If we need to use code of others, we need npm;
+
+Package.json:
+============
+refer:packageTry
+
+what?
+->Npm's configuration file.
+->It is a json file that typically lives in the root directory of your package and holds various metadatga relevant to the package.
+
+why?
+->It is the central place to configure and describe how to interact with and run your package.
+
+->It is primarily used by the npm CLI.
+
+Creation:
+->we can create a package.json file(name and version = mandatory);
+->package.json - keywords - this is used in npm website searching for package (it is like metadata)- This is array of words.
+->description - describe the package.
+->main - entry point of the project.
+
+Auto-creation:
+->npm init = walkthrough the package.json setup.
+->npm init -y = default package.json generated instantly.
+
+Installing packages from npm registry:
+======================================
+
+->Go to npmjs.com and search for package(here I checked for lower-case);
+
+->Analyze:
+    ->Publish date: less than year(latest);
+    ->weekly downloads: don't go for <1000.
+    ->package size: small project size.
+
+->Go to project folder terminal and use installation cmd of the project from registry.
+->The package will be downloaded from the registry and installed in node modules folder of the project.
+ex:npm i lower-case
+
+->Dependencies will be included in package.json.
+
+->To uninstall a package:
+    ->npm uninstall <package_name>
+    ->This will remove the package data in node modules as well as in package.json's dependencies.
+
+->Package-lock.json contains all the installed packages along with our project's version details.
+
+Using packages:
+==============
+
+->Read the usage of the package from the registry.
+
+->Import it like a esm or commonJs module:
+ex:let lowerCase = require("lower-case").lowerCase;(commonJs);
+
+->use the variable which has the function in the code
+
+Dependencies:
+=============
+->It contains the installed packages version number;
+->The node modules contains the installed package which has the size in megaBytes.
+->So we tend to .gitignore it and the dev's who need to use this project can just the clone the project source code and use "npm install" to install all the necessary packages for the project.
+
+versioning:
+==========
+
+->To downgrade: npm install <package-name>@<version>
+
+->To latest version : npm install <package-name>
+
+Semantic versioning:
+===================
+
+->SemVer is a simple set of rules and requirements that dictate how version numbers are assigned and incremented.
+
+syntax: x.y.z
+
+x=major version.
+y=minor version.
+z=patch.
+
+->when we fix the bug and backwards-compatible then increase patch.
+ex:1.1.1 to 1.1.2
+
+->when we add new feature and the code is backward compatible then increase minor version.
+ex:1.1.2 to 1.2.0
+
+->when we add new feature and the code is not backward compatible then increase major version.
+ex:1.2.0 to 2.0.0;
+
+->Initial dev version:0.1.0;
+
+->Production ready:1.0.0;
+
+Global packages:
+================
+->Some package should be only used on cmd line.
+->Like create-react-app package from registry.
+Ex:nodemon
+
+install syntax: sudo npm install -g nodemon
+
+->They are not described in the package.json. so npm install won't work.
+
+uninstall: npm uninstall -g nodemon
+
+
+NPM Scripts:
+============
+
+->An npm script is a convenient way to bundle common commands for use in a project.
+
+->They are typically entered in the command line in order to do something with the application.
+
+->NPM scripts are stored in a project's package.json file, giving access to everyone who has access to the codebase.
+
+syntax:
+    ->ex: npm run <script_name>
+
+Ex:
+"scripts": {
+    "start":"node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+->"npm run start", will run index.js
+
+Publish a package:
+==================
+1.create a account on npmjs.com(remember username and password);
+2.Login into account on vscode
+    ->syntax:npm adduser <username>
+    ->password & email.
+3.Now publish:
+    ->syntax: npm publish
+4.Check in npm registry:
+    ->http://www.npmjs.com/package/rishipackagetry
+
+Using my published package:
+============================
+
+refer:./newPackage/ex11.js
+->npm version patch --will increase the x:y:z++;
+->npm version major --will increase the x++:y:z;
+->npm version minor --will increase the x:y++:z;
+
+
+NPX:
+===
+
+->NPX directly executes and then uninstalls them.
+->npx helps us avoid versioning, dependency issues and installing unnecessary packages that we just want to try out.
+
+NPX:Workspace:
+video:https://www.youtube.com/watch?v=4CpR-_Nyd00&ab_channel=ConciseDeveloper
+=============
+A workspace in npm refers to a feature introduced in npm version 7 that allows you to manage multiple packages within a single root project. This feature is particularly useful for monorepos, where you have multiple related packages that you want to manage together, sharing dependencies, scripts, and versioning.
+
+->Normally there is client :
+
+client:
+=======
+->Node modules
+->Src/index.js
+->package.json
+
+server:
+=======
+->Node modules
+->Src/index.js
+->package.json
+
+->Now comes monospace- which contains both client and server but with separate package.json files.
+
+monospace:
+==========
+->node modules
+->packages
+    ->server    
+        ->src/index.js
+    ->client
+        ->src/index.js
+->Package.json
+
+->Monospace can be implemented by using npm workspaces.
+
+steps for workspace:
+refer:npmWorkspace
+-------------------
+npm init -y -w packages/rishiser
+ver -w packages/rishiclient.
+-w=for workspace.
+
+->node_modules will have two folder...
+->Each packages will have separate package.json;
+
+To install for single packages:
+npm i cowsay -w packages/rishicl
+ient
+
+Running scripts in workspaces:
+===============================
+->"npm test" on root directory of project will return the test script on package.json on root folder;
+->"npm test -ws" will run the test scripts on each of the package.json on the workspace.
+->npm test -w packages/rishiserver will run on the specific package of the workspace.
+
+->This is the npm workspaces.

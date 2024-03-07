@@ -1,0 +1,20 @@
+{
+  "name": "rishipackagetry",
+  "version": "2.0.0",
+  "description": "This is understanding how package works.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rishi",
+    "rishicollinz"
+  ],
+  "author": "Rishikesh",
+  "license": "ISC",
+  "dependencies": {
+    "lower-case": "^2.0.2"
+  },
+  "type": "commonjs"
+}
